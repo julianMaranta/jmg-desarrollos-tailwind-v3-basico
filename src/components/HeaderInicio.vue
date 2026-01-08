@@ -2,229 +2,286 @@
   <header 
     id="inicio" 
     class="min-h-[85vh] w-full text-white relative overflow-hidden flex items-center justify-center"
-    ref="headerRef"
   >
-    <!-- Video de fondo -->
+    <!-- Contenedor de video con múltiples estrategias -->
     <div class="absolute inset-0 w-full h-full z-0 overflow-hidden">
+      
+      <!-- 1. Background estático de fallback -->
+      <div 
+        class="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 z-0"
+        :class="{'opacity-100': !videoSupported, 'opacity-0': videoSupported && videoLoaded}"
+      ></div>
+      
+    
+      
+      <!-- 3. Video con estrategia de carga optimizada -->
       <video
-        autoplay
+        ref="videoEl"
+        v-show="videoSupported && videoLoaded"
+        :autoplay="canAutoplay"
         muted
         loop
         playsinline
-        class="absolute top-0 left-0 w-full h-full object-cover"
+        preload="metadata"
+        class="absolute top-0 left-0 w-full h-full object-cover z-10"
         :style="{ filter: 'brightness(0.5)' }"
+        @loadeddata="handleVideoLoaded"
+        @canplay="handleVideoCanPlay"
+        @error="handleVideoError"
+        @playing="handleVideoPlaying"
       >
-        <!-- Agrega aquí tu video -->
-        <source src="/assets/container.webm" type="video/mp4">
-        <!-- Fallback si el video no carga -->
-        <div class="absolute inset-0 bg-blue-900"></div>
+        <!-- IMPORTANTE: Usar rutas absolutas en AWS Amplify -->
+        <source 
+          :src="videoSources[currentSource].src" 
+          :type="videoSources[currentSource].type"
+          @error="handleSourceError"
+        >
+        Tu navegador no soporta el elemento de video.
       </video>
-      <!-- Capa oscura para mejor legibilidad -->
-      <div class="absolute inset-0 bg-black/40"></div>
-    </div>
-
-    <!-- Contenedor principal -->
-    <div class="w-full max-w-6xl mx-auto px-4 md:px-6 text-center relative z-10 py-6 md:py-8 flex flex-col items-center">
       
-      <!-- Contenedor para badge -->
-      <div class="relative w-full mb-1 md:mb-6 pt-8 md:pt-0">
-        <!-- Badge -->
-        <div class="inline-flex items-center bg-blue-800/90 rounded-full px-4 py-1.5 mb-2 border border-blue-600">
-          <div class="w-2 h-2 rounded-full mr-2 bg-white"></div>
-          <span class="text-xs font-bold tracking-wider text-white">🚀 AGENCIA DIGITAL</span>
-          <div class="ml-2 w-0.5 h-4 rounded-full bg-white/70"></div>
-        </div>
-      </div>
-
-      <!-- Sección principal con títulos -->
-      <div class="w-full flex flex-col items-center space-y-3 md:space-y-4">
-        <!-- Título principal -->
-        <div class="relative w-full mb-1 md:mb-2 text-center">
-          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-center w-full tracking-tight leading-tight">
-            <span class="relative inline-block">
-              <div class="relative pb-1">
-                <!-- Primera línea -->
-                <div class="text-white leading-tight">
-                  Transformamos Tu
-                </div>
-                
-                <!-- Segunda línea -->
-                <div class="text-white pt-2 md:pt-3 leading-[1.3]">
-                  Visión Digital
-                </div>
-              </div>
-              
-              <!-- Subrayado -->
-              <div class="absolute -bottom-1 left-1/4 right-1/4 h-0.5 rounded-full bg-white opacity-80 mt-0.5"></div>
-            </span>
-          </h1>
-          
-          <!-- Slogan -->
-          <div class="mt-2 md:mt-3">
-            <p class="text-base md:text-lg font-bold text-white">
-              De <span class="text-white">Ideas</span> a 
-              <span class="text-white">Resultados</span> Excepcionales
-            </p>
-          </div>
-        </div>
-        
-        <!-- Subtítulo -->
-        <div class="relative max-w-2xl mx-auto mb-4 md:mb-6">
-          <div class="relative bg-blue-900/70 border border-blue-600 rounded-lg p-3 md:p-4 backdrop-blur-sm">
-            <p class="text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium text-white">
-              <span class="text-white">Creamos experiencias web y mobile </span> 
-              <span class="text-white font-bold">
-                innovadoras que además de captar 
-              </span>
-              la atención <span class="text-white">generan experiencias únicas</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Botones CTA -->
-        <div class="flex flex-col sm:flex-row gap-2 md:gap-3 justify-center items-center w-full mt-1">
-          
-          <!-- Botón Primario -->
-          <button @click="scrollToSection('servicios')"
-                  class="relative bg-white text-blue-900 font-bold py-2.5 px-6 rounded-lg hover:bg-blue-100 text-sm md:text-base">
-            <span class="flex items-center justify-center">
-              Explorar Servicios
-              <span class="ml-2 text-lg">→</span>
-            </span>
-          </button>
-          
-          <!-- Botón Secundario -->
-          <button @click="scrollToSection('contacto')"
-                  class="relative border border-white text-white font-bold py-2.5 px-6 rounded-lg hover:bg-white/10 text-sm md:text-base">
-            <span class="relative flex items-center justify-center">
-              <img 
-                src="/assets/whatsapp-logo1.png" 
-                alt="WhatsApp" 
-                class="w-5 h-5 mr-2 object-contain"
-              />
-              Contactar Ahora
-            </span>
-          </button>
-        </div>
-
-        <!-- Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 max-w-6xl mx-auto w-full px-4 mt-4 md:mt-6">
-          <div v-for="(stat, index) in stats" :key="index" class="group relative">
-            <!-- Tarjeta Stat -->
-            <div class="relative bg-blue-900/70 rounded-lg border border-blue-600 p-4 hover:bg-blue-900/80 backdrop-blur-sm">
-              <div class="relative mb-1 md:mb-2">
-                <div class="text-xl md:text-2xl lg:text-3xl font-black leading-none text-white">
-                  {{ stat.value }}
-                </div>
-              </div>
-              
-              <div class="text-xs font-semibold uppercase tracking-wide text-white">
-                <div class="flex items-center justify-center space-x-1">
-                  <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
-                  <span>{{ stat.label }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Overlay para mejor contraste -->
+      <div class="absolute inset-0 bg-black/50 z-15"></div>
+      
+      <!-- Botón de reproducción manual -->
+      <button
+        v-if="showPlayButton"
+        @click="playVideoManually"
+        @touchstart="playVideoManually"
+        class="absolute bottom-4 right-4 z-20 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group"
+        aria-label="Reproducir video"
+      >
+        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path v-if="!isPlaying" d="M8 5v14l11-7z"/>
+          <path v-else d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+        <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          {{ isPlaying ? 'Pausar' : 'Reproducir' }}
+        </span>
+      </button>
     </div>
+
+    <!-- Resto de tu contenido... -->
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-// Stats
-const stats = [
-  { 
-    value: 'Desarrollo Express', 
-    label: 'VELOCIDAD'
+// Estado del video
+const videoEl = ref(null);
+const videoLoaded = ref(false);
+const videoSupported = ref(true);
+const isPlaying = ref(false);
+const showPlayButton = ref(false);
+const canAutoplay = ref(true);
+const currentSource = ref(0);
+const retryCount = ref(0);
+const maxRetries = 3;
+
+// Fuentes de video - RUTAS ABSOLUTAS IMPORTANTE
+const videoSources = [
+  {
+    src: '/assets/container.mp4',  // MP4 primero para iOS
+    type: 'video/mp4',
+    label: 'MP4'
   },
-  { 
-    value: 'Calidad Premium', 
-    label: 'EXCELENCIA'
-  },
-  { 
-    value: 'Soporte Continuo', 
-    label: 'COMPROMISO'
-  },
-  { 
-    value: 'Consultas Gratis', 
-    label: 'ASESORÍA'
+  {
+    src: '/assets/container.webm', // WebM para otros navegadores
+    type: 'video/webm',
+    label: 'WebM'
   }
 ];
 
-// Scroll a sección
-const scrollToSection = (sectionId) => {
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    });
+// Verificar compatibilidad del navegador
+const checkVideoSupport = () => {
+  const video = document.createElement('video');
+  const canPlayWebM = video.canPlayType('video/webm; codecs="vp8, vorbis"');
+  const canPlayMP4 = video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+  
+  videoSupported.value = !!(canPlayWebM || canPlayMP4);
+  
+  // En iOS, forzar MP4
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    currentSource.value = 0; // MP4
   }
 };
 
-// Iniciar video programáticamente (opcional)
-const headerRef = ref(null);
+// Manejar carga del video
+const handleVideoLoaded = () => {
+  console.log('Video cargado correctamente');
+  videoLoaded.value = true;
+  
+  // Intentar reproducir
+  playVideoWithRetry();
+};
 
+const handleVideoCanPlay = () => {
+  console.log('Video listo para reproducir');
+  videoLoaded.value = true;
+};
+
+// Manejar errores del video
+const handleVideoError = (e) => {
+  console.error('Error en el elemento video:', e);
+  
+  if (retryCount.value < maxRetries) {
+    retryCount.value++;
+    console.log(`Reintentando fuente de video (${retryCount.value}/${maxRetries})...`);
+    
+    // Cambiar a la siguiente fuente
+    currentSource.value = (currentSource.value + 1) % videoSources.length;
+    
+    // Forzar recarga del video
+    setTimeout(() => {
+      if (videoEl.value) {
+        videoEl.value.load();
+      }
+    }, 1000);
+  } else {
+    videoSupported.value = false;
+    videoLoaded.value = false;
+    console.error('Todas las fuentes de video fallaron');
+  }
+};
+
+const handleSourceError = () => {
+  console.error('Error cargando fuente de video');
+  handleVideoError(new Error('Source error'));
+};
+
+// Reproducir video con reintentos
+const playVideoWithRetry = async (retries = 3) => {
+  if (!videoEl.value || !videoLoaded.value) return;
+  
+  try {
+    await videoEl.value.play();
+    isPlaying.value = true;
+    showPlayButton.value = false;
+    console.log('Video reproduciéndose automáticamente');
+  } catch (error) {
+    console.log('Autoplay bloqueado:', error);
+    canAutoplay.value = false;
+    showPlayButton.value = true;
+    
+    // En móviles, necesitamos interacción del usuario
+    if (retries > 0) {
+      console.log(`Reintentando reproducción (${4 - retries}/3)...`);
+      setTimeout(() => playVideoWithRetry(retries - 1), 1000);
+    }
+  }
+};
+
+// Reproducción manual
+const playVideoManually = async () => {
+  if (!videoEl.value) return;
+  
+  try {
+    if (isPlaying.value) {
+      videoEl.value.pause();
+      isPlaying.value = false;
+    } else {
+      await videoEl.value.play();
+      isPlaying.value = true;
+      showPlayButton.value = false;
+    }
+  } catch (error) {
+    console.error('Error en reproducción manual:', error);
+  }
+};
+
+const handleVideoPlaying = () => {
+  isPlaying.value = true;
+  showPlayButton.value = false;
+};
+
+// Inicialización
 onMounted(() => {
-  // Intenta reproducir el video si hay problemas de autoplay
-  const videoElement = headerRef.value?.querySelector('video');
-  if (videoElement) {
-    videoElement.play().catch(error => {
-      console.log('Autoplay prevenido:', error);
-      // Puedes agregar un botón de reproducción aquí si es necesario
-    });
+  checkVideoSupport();
+  
+  // Esperar a que el DOM esté listo
+  setTimeout(() => {
+    if (videoEl.value && videoSupported.value) {
+      // Configurar atributos después de montar
+      videoEl.value.setAttribute('playsinline', '');
+      videoEl.value.setAttribute('webkit-playsinline', '');
+      videoEl.value.setAttribute('x5-playsinline', '');
+      
+      // Forzar carga del video
+      videoEl.value.load();
+      
+      // Configurar listeners de interacción del usuario para móviles
+      const handleUserInteraction = () => {
+        playVideoWithRetry();
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+        document.removeEventListener('scroll', handleUserInteraction);
+      };
+      
+      // Solo en móviles
+      if ('ontouchstart' in window) {
+        document.addEventListener('click', handleUserInteraction, { once: true });
+        document.addEventListener('touchstart', handleUserInteraction, { once: true });
+        document.addEventListener('scroll', handleUserInteraction, { once: true });
+        
+        // Mostrar botón después de 2 segundos si no hay autoplay
+        setTimeout(() => {
+          if (!isPlaying.value) {
+            showPlayButton.value = true;
+          }
+        }, 2000);
+      }
+    }
+  }, 500);
+});
+
+onBeforeUnmount(() => {
+  if (videoEl.value) {
+    videoEl.value.pause();
+    videoEl.value.removeAttribute('src');
+    videoEl.value.load();
   }
 });
 </script>
 
 <style scoped>
-/* Estilos responsive básicos */
+/* Optimizaciones para video en Amplify */
+video {
+  object-fit: cover;
+  object-position: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Transiciones suaves */
+video, .absolute.inset-0 {
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* Mejoras para móviles */
 @media (max-width: 768px) {
-  #inicio {
-    min-height: 80vh;
+  video {
+    /* En móviles, priorizar rendimiento */
+    transform: scale(1.01); /* Fix para algunos dispositivos */
   }
   
-  .relative.w-full.pt-8 {
-    padding-top: 2rem;
+  /* Ocultar video en dispositivos muy lentos */
+  @media (max-height: 600px) {
+    video {
+      display: none;
+    }
   }
-  
-  .relative.w-full.mb-1 {
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Optimizar video para móvil */
+}
+
+/* Fix para Safari iOS */
+@supports (-webkit-touch-callout: none) {
   video {
     object-fit: cover;
     object-position: center;
+    height: 100vh;
+    width: 100vw;
   }
-}
-
-@media (max-width: 480px) {
-  .grid.grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-  
-  .relative.w-full.mb-1 {
-    margin-bottom: 0.25rem;
-  }
-  
-  .relative.w-full.pt-8 {
-    padding-top: 2.5rem;
-  }
-}
-
-/* Optimización de video */
-video {
-  min-width: 100%;
-  min-height: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>

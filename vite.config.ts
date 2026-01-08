@@ -82,7 +82,11 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true, // Escucha en todas las interfaces
-    open: true // Abre navegador automáticamente
+    open: true, // Abre navegador automáticamente
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    }
   },
   
   // Previsualización de producción
