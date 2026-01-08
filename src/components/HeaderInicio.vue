@@ -15,7 +15,7 @@
         :style="{ filter: 'brightness(0.5)' }"
       >
         <!-- Agrega aquí tu video -->
-        <source src="/assets/Container(1).mp4" type="video/mp4">
+        <source src="/assets/container.webm" type="video/mp4">
         <!-- Fallback si el video no carga -->
         <div class="absolute inset-0 bg-blue-900"></div>
       </video>
