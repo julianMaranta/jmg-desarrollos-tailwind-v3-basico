@@ -1,20 +1,23 @@
-# Permite autoplay de video
+# Headers generales
 /*
-  X-Frame-Options: ALLOWALL
-  X-Content-Type-Options: nosniff
-  Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+# Headers para videos
+/assets/*.mp4
+  Content-Type: video/mp4
+  Cache-Control: public, max-age=31536000, immutable
+  Accept-Ranges: bytes
   Cross-Origin-Resource-Policy: cross-origin
 
-# Headers específicos para videos
 /assets/*.webm
   Content-Type: video/webm
   Cache-Control: public, max-age=31536000, immutable
   Accept-Ranges: bytes
   Cross-Origin-Resource-Policy: cross-origin
 
-/assets/*.mp4
-  Content-Type: video/mp4
+/assets/*
   Cache-Control: public, max-age=31536000, immutable
-  Accept-Ranges: bytes
-  Cross-Origin-Resource-Policy: cross-origin
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
