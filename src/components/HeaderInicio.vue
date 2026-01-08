@@ -1,16 +1,35 @@
 <template>
   <header 
     id="inicio" 
-    class="min-h-[85vh] w-full text-white bg-blue-900 relative overflow-hidden flex items-center justify-center"
+    class="min-h-[85vh] w-full text-white relative overflow-hidden flex items-center justify-center"
     ref="headerRef"
   >
+    <!-- Video de fondo -->
+    <div class="absolute inset-0 w-full h-full z-0 overflow-hidden">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        class="absolute top-0 left-0 w-full h-full object-cover"
+        :style="{ filter: 'brightness(0.5)' }"
+      >
+        <!-- Agrega aquí tu video -->
+        <source src="/assets/container.mp4" type="video/mp4">
+        <!-- Fallback si el video no carga -->
+        <div class="absolute inset-0 bg-blue-900"></div>
+      </video>
+      <!-- Capa oscura para mejor legibilidad -->
+      <div class="absolute inset-0 bg-black/40"></div>
+    </div>
+
     <!-- Contenedor principal -->
     <div class="w-full max-w-6xl mx-auto px-4 md:px-6 text-center relative z-10 py-6 md:py-8 flex flex-col items-center">
       
       <!-- Contenedor para badge -->
       <div class="relative w-full mb-1 md:mb-6 pt-8 md:pt-0">
         <!-- Badge -->
-        <div class="inline-flex items-center bg-blue-800 rounded-full px-4 py-1.5 mb-2 border border-blue-700">
+        <div class="inline-flex items-center bg-blue-800/90 rounded-full px-4 py-1.5 mb-2 border border-blue-600">
           <div class="w-2 h-2 rounded-full mr-2 bg-white"></div>
           <span class="text-xs font-bold tracking-wider text-white">🚀 AGENCIA DIGITAL</span>
           <div class="ml-2 w-0.5 h-4 rounded-full bg-white/70"></div>
@@ -51,7 +70,7 @@
         
         <!-- Subtítulo -->
         <div class="relative max-w-2xl mx-auto mb-4 md:mb-6">
-          <div class="relative bg-blue-800/80 border border-blue-700 rounded-lg p-3 md:p-4">
+          <div class="relative bg-blue-900/70 border border-blue-600 rounded-lg p-3 md:p-4 backdrop-blur-sm">
             <p class="text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium text-white">
               <span class="text-white">Creamos experiencias web y mobile </span> 
               <span class="text-white font-bold">
@@ -76,7 +95,7 @@
           
           <!-- Botón Secundario -->
           <button @click="scrollToSection('contacto')"
-                  class="relative border border-white text-white font-bold py-2.5 px-6 rounded-lg hover:bg-blue-800 text-sm md:text-base">
+                  class="relative border border-white text-white font-bold py-2.5 px-6 rounded-lg hover:bg-white/10 text-sm md:text-base">
             <span class="relative flex items-center justify-center">
               <img 
                 src="/assets/whatsapp-logo1.png" 
@@ -92,7 +111,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 max-w-6xl mx-auto w-full px-4 mt-4 md:mt-6">
           <div v-for="(stat, index) in stats" :key="index" class="group relative">
             <!-- Tarjeta Stat -->
-            <div class="relative bg-blue-800/80 rounded-lg border border-blue-700 p-4 hover:bg-blue-800">
+            <div class="relative bg-blue-900/70 rounded-lg border border-blue-600 p-4 hover:bg-blue-900/80 backdrop-blur-sm">
               <div class="relative mb-1 md:mb-2">
                 <div class="text-xl md:text-2xl lg:text-3xl font-black leading-none text-white">
                   {{ stat.value }}
@@ -114,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 // Stats
 const stats = [
@@ -146,31 +165,23 @@ const scrollToSection = (sectionId) => {
     });
   }
 };
+
+// Iniciar video programáticamente (opcional)
+const headerRef = ref(null);
+
+onMounted(() => {
+  // Intenta reproducir el video si hay problemas de autoplay
+  const videoElement = headerRef.value?.querySelector('video');
+  if (videoElement) {
+    videoElement.play().catch(error => {
+      console.log('Autoplay prevenido:', error);
+      // Puedes agregar un botón de reproducción aquí si es necesario
+    });
+  }
+});
 </script>
 
 <style scoped>
-/* Estilos mínimos y básicos */
-header {
-  background: #1e40af; /* blue-800 */
-}
-
-/* Fondo más intenso */
-.bg-blue-900 {
-  background-color: #1e3a8a; /* blue-900 - azul más fuerte */
-}
-
-.bg-blue-800 {
-  background-color: #1e40af; /* blue-800 */
-}
-
-.bg-blue-800\/80 {
-  background-color: rgba(30, 64, 175, 0.8); /* blue-800 con 80% opacidad */
-}
-
-.border-blue-700 {
-  border-color: #1d4ed8; /* blue-700 */
-}
-
 /* Estilos responsive básicos */
 @media (max-width: 768px) {
   #inicio {
@@ -183,6 +194,12 @@ header {
   
   .relative.w-full.mb-1 {
     margin-bottom: 0.5rem;
+  }
+  
+  /* Optimizar video para móvil */
+  video {
+    object-fit: cover;
+    object-position: center;
   }
 }
 
@@ -199,5 +216,15 @@ header {
   .relative.w-full.pt-8 {
     padding-top: 2.5rem;
   }
+}
+
+/* Optimización de video */
+video {
+  min-width: 100%;
+  min-height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
