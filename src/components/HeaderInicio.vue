@@ -1,26 +1,13 @@
 <template>
   <header 
     id="inicio" 
-    class="min-h-[85vh] w-full text-white relative overflow-hidden flex items-center justify-center"
+    class="min-h-[85vh] w-full text-white bg-blue-900 relative overflow-hidden flex items-center justify-center"
     ref="headerRef"
   >
-    <!-- Video de fondo -->
-    <div class="absolute inset-0 w-full h-full z-0 overflow-hidden">
-      <video
-        autoplay
-        muted
-        loop
-        playsinline
-        class="absolute top-0 left-0 w-full h-full object-cover"
-        :style="{ filter: 'brightness(0.5)' }"
-      >
-        <!-- Agrega aquí tu video -->
-        <source src="/assets/container.webm" type="video/mp4">
-        <!-- Fallback si el video no carga -->
-        <div class="absolute inset-0 bg-blue-900"></div>
-      </video>
-      <!-- Capa oscura para mejor legibilidad -->
-      <div class="absolute inset-0 bg-black/40"></div>
+    <!-- Fondo azul sólido (sin video) -->
+    <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-blue-900">
+      <!-- Puedes agregar un patrón sutil si lo deseas -->
+      <div class="absolute inset-0 opacity-10 bg-gradient-to-br from-blue-700 via-blue-900 to-blue-800"></div>
     </div>
 
     <!-- Contenedor principal -->
@@ -70,7 +57,7 @@
         
         <!-- Subtítulo -->
         <div class="relative max-w-2xl mx-auto mb-4 md:mb-6">
-          <div class="relative bg-blue-900/70 border border-blue-600 rounded-lg p-3 md:p-4 backdrop-blur-sm">
+          <div class="relative bg-blue-800/80 border border-blue-700 rounded-lg p-3 md:p-4">
             <p class="text-sm sm:text-base md:text-lg leading-relaxed text-center font-medium text-white">
               <span class="text-white">Creamos experiencias web y mobile </span> 
               <span class="text-white font-bold">
@@ -111,7 +98,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 max-w-6xl mx-auto w-full px-4 mt-4 md:mt-6">
           <div v-for="(stat, index) in stats" :key="index" class="group relative">
             <!-- Tarjeta Stat -->
-            <div class="relative bg-blue-900/70 rounded-lg border border-blue-600 p-4 hover:bg-blue-900/80 backdrop-blur-sm">
+            <div class="relative bg-blue-800/70 rounded-lg border border-blue-700 p-4 hover:bg-blue-800/80">
               <div class="relative mb-1 md:mb-2">
                 <div class="text-xl md:text-2xl lg:text-3xl font-black leading-none text-white">
                   {{ stat.value }}
@@ -166,18 +153,12 @@ const scrollToSection = (sectionId) => {
   }
 };
 
-// Iniciar video programáticamente (opcional)
+// Referencia al header (mantenida por si necesitas otras funcionalidades)
 const headerRef = ref(null);
 
 onMounted(() => {
-  // Intenta reproducir el video si hay problemas de autoplay
-  const videoElement = headerRef.value?.querySelector('video');
-  if (videoElement) {
-    videoElement.play().catch(error => {
-      console.log('Autoplay prevenido:', error);
-      // Puedes agregar un botón de reproducción aquí si es necesario
-    });
-  }
+  // Código de inicialización si es necesario
+  console.log('Header mounted');
 });
 </script>
 
@@ -195,12 +176,6 @@ onMounted(() => {
   .relative.w-full.mb-1 {
     margin-bottom: 0.5rem;
   }
-  
-  /* Optimizar video para móvil */
-  video {
-    object-fit: cover;
-    object-position: center;
-  }
 }
 
 @media (max-width: 480px) {
@@ -216,15 +191,5 @@ onMounted(() => {
   .relative.w-full.pt-8 {
     padding-top: 2.5rem;
   }
-}
-
-/* Optimización de video */
-video {
-  min-width: 100%;
-  min-height: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>
